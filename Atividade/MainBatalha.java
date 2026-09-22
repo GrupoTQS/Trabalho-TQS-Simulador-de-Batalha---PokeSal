@@ -1,84 +1,110 @@
 package Atividade;
-
+ 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
-
+ 
 public class MainBatalha {
-
+ 
     static Random r = new Random();
-
+ 
     public static void main(String[] args) {
-
+ 
         Scanner scanner = new Scanner(System.in);
-
+ 
         String[] nomesGrama = {"Bulbaucsal", "Chicocsal"};
         String[] nomesFogo  = {"Charmancsal", "Cyndacsal"};
         String[] nomesAgua  = {"Totocsal", "Squircsal"};
-
-        
+ 
         System.out.println("Escolha seu Pokésal inicial:");
         System.out.println("1 - Planta   2 - Fogo   3 - Agua");
         int escolha = scanner.nextInt();
-
+ 
         Pokemons jogador = criarPokemon(escolha, nomesGrama, nomesFogo, nomesAgua);
-
+ 
         Atribs atribs = new Atribs();
         System.out.println("Distribua os atributos do seu Pokésal (" + jogador.getNome() + "):");
         atribs.Pstatus(jogador);
-
-       
+ 
         Pokemons adversario = criarPokemon(1 + r.nextInt(3), nomesGrama, nomesFogo, nomesAgua);
         int[] statsAdv = distribuirAleatorio(150);
         adversario.setHP(statsAdv[0]);
         adversario.setATK(statsAdv[1]);
         adversario.setDEF(statsAdv[2]);
         adversario.setSPD(statsAdv[3]);
-
-        
+ 
         String[] terrenos = {"Asfalto Quente", "Poça de Chuva", "Canteiro Central"};
         String terreno = terrenos[r.nextInt(3)];
         System.out.println("\nTerreno da batalha: " + terreno);
         System.out.println(jogador.getNome() + " (" + jogador.getTipo() + ") VS "
                 + adversario.getNome() + " (" + adversario.getTipo() + ")\n");
-
-       
+ 
         String primeiro = OrdemDeTurno.Atacanten1(
                 jogador.getNome(), jogador.getSPD(),
                 adversario.getNome(), adversario.getSPD());
         System.out.println(primeiro + " ataca primeiro!\n");
-
+ 
         
-        System.out.println("Quantos turnos a batalha vai durar?");
-        int totalTurnos = scanner.nextInt();
-
-        int hpJogador = jogador.getHP();
-        int hpAdversario = adversario.getHP();
-
-        for (int turno = 1; turno <= totalTurnos; turno++) {
+        List<Itemnamochila> mochila = new ArrayList<>();
+        mochila.add(Itensbatalha.Potion());
+        mochila.add(Itensbatalha.Superpotion());
+        mochila.add(Itensbatalha.Antidoto());
+ 
+        int hpMaxJogador = jogador.getHP();
+        int hpMaxAdversario = adversario.getHP();
+ 
+       
+        int[] hp = { jogador.getHP(), adversario.getHP() };
+ 
+        String vencedor = null;
+        int turno = 1;
+        final int MAX_TURNOS_SEGURANCA = 500; 
+        while (turno <= MAX_TURNOS_SEGURANCA) {
             System.out.println("--- Turno " + turno + " ---");
-
+ 
             if (primeiro.equals(jogador.getNome())) {
-                hpAdversario = atacar(jogador, adversario, hpAdversario, terreno, jogador, scanner);
-                if (hpAdversario <= 0) { System.out.println(adversario.getNome() + " foi derrotado!"); break; }
-                hpJogador = atacar(adversario, jogador, hpJogador, terreno, jogador, scanner);
-                if (hpJogador <= 0) { System.out.println(jogador.getNome() + " foi derrotado!"); break; }
+                turnoJogador(jogador, adversario, hp, hpMaxJogador, terreno, scanner, mochila);
+                if (hp[1] <= 0) { vencedor = jogador.getNome(); break; }
+ 
+                turnoAdversario(adversario, jogador, hp, terreno);
+                if (hp[0] <= 0) { vencedor = adversario.getNome(); break; }
             } else {
-                hpJogador = atacar(adversario, jogador, hpJogador, terreno, jogador, scanner);
-                if (hpJogador <= 0) { System.out.println(jogador.getNome() + " foi derrotado!"); break; }
-                hpAdversario = atacar(jogador, adversario, hpAdversario, terreno, jogador, scanner);
-                if (hpAdversario <= 0) { System.out.println(adversario.getNome() + " foi derrotado!"); break; }
+                turnoAdversario(adversario, jogador, hp, terreno);
+                if (hp[0] <= 0) { vencedor = adversario.getNome(); break; }
+ 
+                turnoJogador(jogador, adversario, hp, hpMaxJogador, terreno, scanner, mochila);
+                if (hp[1] <= 0) { vencedor = jogador.getNome(); break; }
             }
-
-            
-            hpJogador = Batipos.regenerarHPCanteiroCentral11(terreno, jogador.getTipo(), hpJogador, jogador.getHP());
-            hpAdversario = Batipos.regenerarHPCanteiroCentral11(terreno, adversario.getTipo(), hpAdversario, adversario.getHP());
-
-            System.out.println(jogador.getNome() + " HP: " + hpJogador + " | "
-                    + adversario.getNome() + " HP: " + hpAdversario + "\n");
+ 
+            hp[0] = Batipos.regenerarHPCanteiroCentral11(terreno, jogador.getTipo(), hp[0], hpMaxJogador);
+            hp[1] = Batipos.regenerarHPCanteiroCentral11(terreno, adversario.getTipo(), hp[1], hpMaxAdversario);
+ 
+            System.out.println(jogador.getNome() + " HP: " + hp[0] + " | "
+                    + adversario.getNome() + " HP: " + hp[1] + "\n");
+ 
+            turno++;
         }
+ 
+        System.out.println();
+        if (vencedor != null) {
+            System.out.println( vencedor + " venceu a batalha!!! PARABÉNS ");
+        } else {
+            
+            if (hp[0] > hp[1]) {
+                System.out.println(" " + jogador.getNome() + " venceu por ter mais HP! ("
+                        + hp[0] + " x " + hp[1] + ") ");
+            } else if (hp[1] > hp[0]) {
+                System.out.println("*** " + adversario.getNome() + " venceu por ter mais HP! ("
+                        + hp[1] + " x " + hp[0] + ") ");
+            } else {
+                System.out.println("*** A batalha terminou em empate! (" + hp[0] + " x " + hp[1] + ") ***");
+            }
+        }
+ 
+        scanner.close();
     }
-
-    
+ 
     private static Pokemons criarPokemon(int escolha, String[] grama, String[] fogo, String[] agua) {
         Pokemons p = new Pokemons();
         if (escolha == 1) {
@@ -93,8 +119,7 @@ public class MainBatalha {
         }
         return p;
     }
-
-    
+ 
     private static int[] distribuirAleatorio(int total) {
         int[] valores = new int[4];
         int restante = total;
@@ -107,48 +132,85 @@ public class MainBatalha {
         valores[3] = restante;
         return valores;
     }
-
-    
-    private static Golpe escolherGolpe(Pokemons atacante, Pokemons jogador, Scanner scanner) {
-        Golpe opcao1;
-        Golpe opcao2;
-
-        if (atacante.getTipo().equals("Fogo")) {
-            opcao1 = NGolpes.lancachamas();
-            opcao2 = NGolpes.boladefogo();
-        } else if (atacante.getTipo().equals("Grama")) {
-            opcao1 = NGolpes.povenenoso();
-            opcao2 = NGolpes.chicote();
+ 
+   
+    private static Golpe[] golpesPorTipo(String tipo) {
+        if (tipo.equals("Fogo")) {
+            return new Golpe[] { NGolpes.lancachamas(), NGolpes.boladefogo() };
+        } else if (tipo.equals("Grama")) {
+            return new Golpe[] { NGolpes.povenenoso(), NGolpes.chicote() };
         } else {
-            opcao1 = NGolpes.jatodagua();
-            opcao2 = NGolpes.correntedeagua();
+            return new Golpe[] { NGolpes.jatodagua(), NGolpes.correntedeagua() };
         }
-
-        if (atacante == jogador) {
-            System.out.println(atacante.getNome() + ", escolha seu golpe:");
-            System.out.println("1 - " + opcao1.getnome());
-            System.out.println("2 - " + opcao2.getnome());
-            int escolha = scanner.nextInt();
-            return escolha == 1 ? opcao1 : opcao2;
-        }
-
-        return r.nextBoolean() ? opcao1 : opcao2;
     }
-
+ 
     
-    private static int atacar(Pokemons atacante, Pokemons defensor, int hpDefensorAtual, String terreno,
-            Pokemons jogador, Scanner scanner) {
-        Golpe golpe = escolherGolpe(atacante, jogador, scanner);
-
-        int dano = Batipos.calcularDano(
-                atacante.getATK(), defensor.getDEF(), golpe.getDano(),
-                atacante.getTipo(), defensor.getTipo(), terreno, false);
-
-        int novoHP = hpDefensorAtual - dano;
-
-        System.out.println(atacante.getNome() + " usou " + golpe.getnome()
-                + " e causou " + dano + " de dano em " + defensor.getNome() + "!");
-
-        return novoHP;
+    private static void turnoJogador(Pokemons jogador, Pokemons adversario, int[] hp, int hpMaxJogador,
+            String terreno, Scanner scanner, List<Itemnamochila> mochila) {
+ 
+        System.out.println(jogador.getNome() + ", você deseja:");
+        System.out.println("1 - Atacar");
+        System.out.println("2 - Usar item");
+        int acao = scanner.nextInt();
+ 
+        if (acao == 2) {
+            if (mochila.isEmpty()) {
+                System.out.println("Sua mochila está sem nada! Ataque.");
+            } else {
+                System.out.println("Escolha um item:");
+                for (int i = 0; i < mochila.size(); i++) {
+                    System.out.println((i + 1) + " - " + mochila.get(i).getNome());
+                }
+                int escolhaItem = scanner.nextInt();
+ 
+                if (escolhaItem >= 1 && escolhaItem <= mochila.size()) {
+                    Itemnamochila item = mochila.remove(escolhaItem - 1);
+ 
+                    if (item.getCura() > 0) {
+                        hp[0] = Math.min(hp[0] + item.getCura(), hpMaxJogador);
+                        System.out.println(jogador.getNome() + " usou " + item.getNome()
+                                + " e recuperou HP! HP atual: " + hp[0]);
+                    } else if (item.isCurastatus()) {
+                        System.out.println(jogador.getNome() + " usou " + item.getNome()
+                                + " e foi curado de problemas de status!");
+                    } else {
+                        System.out.println(jogador.getNome() + " usou " + item.getNome() + "!");
+                    }
+                    return; 
+                } else {
+                    System.out.println("Item inválido! O turno foi perdido.");
+                    return;
+                }
+            }
+        }
+ 
+        Golpe golpe = escolherGolpeJogador(jogador, scanner);
+        int dano = Batipos.calcularDano(jogador.getATK(), adversario.getDEF(), golpe.getDano(),
+                jogador.getTipo(), adversario.getTipo(), terreno, false);
+        hp[1] -= dano;
+        System.out.println(jogador.getNome() + " usou " + golpe.getnome()
+                + " e causou " + dano + " de dano em " + adversario.getNome() + "!");
+    }
+ 
+    
+    private static void turnoAdversario(Pokemons adversario, Pokemons jogador, int[] hp, String terreno) {
+        Golpe[] opcoes = golpesPorTipo(adversario.getTipo());
+        Golpe golpe = r.nextBoolean() ? opcoes[0] : opcoes[1];
+ 
+        int dano = Batipos.calcularDano(adversario.getATK(), jogador.getDEF(), golpe.getDano(),
+                adversario.getTipo(), jogador.getTipo(), terreno, false);
+        hp[0] -= dano;
+        System.out.println(adversario.getNome() + " usou " + golpe.getnome()
+                + " e causou " + dano + " de dano em " + jogador.getNome() + "!");
+    }
+ 
+    private static Golpe escolherGolpeJogador(Pokemons jogador, Scanner scanner) {
+        Golpe[] opcoes = golpesPorTipo(jogador.getTipo());
+        System.out.println(jogador.getNome() + ", escolha seu golpe:");
+        System.out.println("1 - " + opcoes[0].getnome());
+        System.out.println("2 - " + opcoes[1].getnome());
+        int escolha = scanner.nextInt();
+        return escolha == 1 ? opcoes[0] : opcoes[1];
     }
 }
+ 
