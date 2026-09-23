@@ -1,0 +1,60 @@
+AI_PROMPTS.txt
+Interação 01
+Data: 20/09/2026
+Ferramenta: ChatGPT
+Finalidade: Correção ortográfica da documentação.
+Prompt utilizado:
+Corrija exclusivamente erros de ortografia, acentuação, concordância, pontuação e gramática do texto abaixo.
+Não altere o conteúdo, o significado ou a estrutura das ideias. Não acrescente informações, exemplos, justificativas ou conclusões. Não crie novos problemas, requisitos, regras de negócio ou classificações. Não mude a classificação de "ambiguidade", "omissão" ou "contradição". Apenas corrija a escrita do texto que já foi produzido por nós. Torneio oficial de batalhas no Estacionamento da UCSal Pituaçu
+Objetivo
+A análise estática de requisitos tem como objetivo realizar uma inspeção das regras de negócio definidas para o sistema antes do início da implementação. A revisão busca identificar possíveis ambiguidades, omissões e contradições que possam gerar diferentes interpretações ou dificuldades durante o desenvolvimento do simulador de batalhas PokeSal.
+Ambiguidades: trechos que podem ser interpretados de mais de uma forma; Omissões: informações necessárias para implementação que não foram especificadas;                                                                                      Contradições: requisitos que conflitam entre si ou com outras partes do documento.
+Seleção do Inicial
+Regra analisada: O treinador deve escolher apenas 1 Pokésal inicial entre as opções permitidas: BulbaSal, CharSal, SquirtSal, ChikoSal, CyndaSal ou TotoSal.”
+Problema identificado: Não fala quem será o oponente. Se for escolhido o mesmo personagem ou o mesmo elemental, vai haver erro ou vai poder jogar? Então é uma omissão
+Regra analisada: Cada Pokésal possui os atributos base: HP, ATK, DEF, SPD (Velocidade) e seu TipoElemental.”
+Problema identificado: Não é informado os valores de base de HP, ATK, DEF e SPD de cada Pokésal apenas exige que esses atributos existam   Isso caracteriza uma omissão, já que esses valores são necessários para os cálculos de batalha.
+Problema identificado:É definido que a batalha ocorre por turnos, mas não especifica uma quantidade de turnos, nem define uma condição relacionada à duração da batalha. Então é uma omissão
+   
+2.  Matriz de Vantagens e Desvantagens Elementais: 
+Problema identificado: Não é informado qual multiplicador deve ser aplicado quando o atacante e o defensor possuem o mesmo TipoElemental  entao é uma omissão 
+3. Mecânica do Estacionamento da UCSal (Efeito de Terreno):
+PROBLEMA IDENTIFICADO: Como os efeitos do terreno serão combinados com os multiplicadores de vantagem e desvantagem elemental? Por exemplo, se um golpe de Fogo tiver vantagem contra o oponente e estiver no terreno Asfalto Quente, o bônus de 15% será aplicado antes ou depois do multiplicador elemental? A especificação não define como esses efeitos devem ser calculados juntos. entaoo é uma ambiguidade 
+PROBLEMA IDENTIFICADO:Como será definido o terreno da batalha? O terreno será sorteado aleatoriamente entre Asfalto Quente, Poça de Chuva/Piso Escorregadio e Canteiro Central? A especificação apresenta os três terrenos e seus efeitos, mas não informa como um deles será escolhido para cada batalha.entaõ é uma omisão 
+4. Sistema de Batalha por Turnos e Iniciativa:
+Regra analisada:”A ordem de ataque do turno é determinada estritamente pelo atributo SPD (Velocidade).”
+Problema identificado:O requisito define que o Pokésal com maior SPD realiza sua ação primeiro, mas não informa o que acontece quando os dois Pokésal possuem o mesmo valor de SPD. Nesse caso, não é definido qual deles deverá realizar a ação primeiro.entao é uma omissão
+5. Gerenciamento de Mochila (Itens de Batalha):
+. 
+Regra analisada:“Cada treinador pode usar no máximo 2 itens por batalha (ex: Potion, Super Potion, Antidote).” 
+Problema identificado:não fala qual é as funcionalidades dos itens então é uma omissão 
+
+
+Interação 02
+Data: 20/09/2026
+Ferramenta: ChatGPT
+Finalidade: Correção ortográfica da documentação.
+
+
+Prompt utilizado:
+Corrija exclusivamente erros de ortografia, acentuação, concordância, pontuação e gramática do texto abaixo.
+Não altere o conteúdo, o significado ou a estrutura das ideias. Não reescreva os requisitos. Não melhore, desenvolva, complemente ou reorganize as definições. Não acrescente informações, valores, regras, comportamentos, exemplos ou justificativas. Não altere nenhuma decisão autoral feita pela equipe.
+Os três requisitos autorais foram definidos exclusivamente pela equipe e não devem ser modificados ou desenvolvidos pela IA.
+Apenas corrija erros de escrita no texto já produzido pela equipe, mantendo exatamente as mesmas informações e decisões autorais.
+Requisitos Autorais
+Objetivo:
+Este documento apresenta a definição detalhada dos 3 requisitos autorais que criamos, conforme exigido pelo projeto PokeSal. Em pontos nos quais a especificação original não definia um comportamento específico, exigindo que a gente tomasse decisões próprias autorais. Os três requisitos autorais são: 
+
+
+1. Sistema de Distribuição Livre de Atributos (SomaTotal) 
+Em vez de cada Pokésal possuir valores fixos e pré-definidos de HP, ATK, DEF e SPD, o sistema adota um pool de pontos (SomaTotal): cada Pokésal inicia com uma quantidade total fixa de pontos de atributo, que o próprio jogador distribui livremente entre os quatro atributos (HP, ATK, DEF e SPD) no momento da seleção do Pokésal inicial, antes do início da batalha. 
+
+
+2. Sorteio Dinâmico de Terreno de Batalha 
+A especificação original define três efeitos de terreno possíveis (Asfalto Quente, Poça de Chuva/Piso Escorregadio e Canteiro Central), mas não especifica como o terreno é determinado para cada partida. Definimos que, no início de cada batalha, o sistema realiza um sorteio aleatório entre os três terrenos possíveis, e o terreno sorteado permanece ativo durante toda a batalha. 
+
+
+3. Definição de Efeitos dos Itens de Batalha 
+A especificação original cita exemplos de itens de mochila (Potion, Super Potion, Antidote) e define que cada treinador pode usar no máximo 2 itens por batalha, consumindo o turno ao usá-los mas não define o efeito numérico/funcional de cada item.Definimos os seguintes efeitos: 
+● Potion: recupera a vida do pokesal 
+● Super Potion: aplica o status Envenenado e reduz 20 pontos de HP. ● Antidote: remove (neutraliza) o status Envenenado do Pokésal.
