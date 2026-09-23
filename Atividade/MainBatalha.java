@@ -30,7 +30,6 @@ public class MainBatalha {
         Pokemons jogador = criarPokemon(escolha, nomesGrama, nomesFogo, nomesAgua);
  
         Atribs atribs = new Atribs();
-        System.out.println("Distribua os atributos do seu Pokésal (" + jogador.getNome() + "):");
         atribs.Pstatus(jogador);
  
         Pokemons adversario = criarPokemon(1 + r.nextInt(3), nomesGrama, nomesFogo, nomesAgua);
