@@ -17,7 +17,7 @@ public class OrdemDeTurno {
 				if(r.nextInt(2)==0) {
 					return nomeA;
 				}
-				else;
+				else{
 					return nomeB;
 		
 	}
