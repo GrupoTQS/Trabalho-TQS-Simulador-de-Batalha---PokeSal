@@ -17,8 +17,16 @@ public class MainBatalha {
         String[] nomesFogo  = {"Charmancsal", "Cyndacsal"};
         String[] nomesAgua  = {"Totocsal", "Squircsal"};
  
-        System.out.println("Escolha seu Pokésal inicial:");
-        System.out.println("1 - Planta   2 - Fogo   3 - Agua");
+      System.out.println("Escolha seu Pokésal inicial:");
+        System.out.println("1 - BulbaSal (Planta)");
+        System.out.println("2 - ChikoSal (Planta)");
+        System.out.println("3 - CharSal (Fogo)");
+        System.out.println("4 - CyndaSal (Fogo)");
+        System.out.println("5 - TotoSal (Água)");
+        System.out.println("6 - SquirtSal (Água)");
+
+int escolha = scanner.nextInt();
+     
         int escolha = scanner.nextInt();
  
         Pokemons jogador = criarPokemon(escolha, nomesGrama, nomesFogo, nomesAgua);
