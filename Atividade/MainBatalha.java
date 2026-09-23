@@ -24,8 +24,6 @@ public class MainBatalha {
         System.out.println("4 - CyndaSal (Fogo)");
         System.out.println("5 - TotoSal (Água)");
         System.out.println("6 - SquirtSal (Água)");
-
-int escolha = scanner.nextInt();
      
         int escolha = scanner.nextInt();
  
